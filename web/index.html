@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Latihan TypeScript Modul 3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<style>
+/* Layout: flat 2D blocks on white. Every surface is a hard-edged box with a thick ink outline and an offset solid shadow; code sits in dark brown slabs. Sticky exercise rail, then one section per exercise: code left, live panel right, stacking on narrow screens. */
+:root {
+  --bg: #ffffff;
+  --ink: #2b1a10;
+  --muted: #6f5b4c;
+  --brown: #7a4524;
+  --brown-deep: #4b2814;
+  --orange: #ec7a2c;
+  --yellow: #f7c531;
+  --yellow-soft: #fff6d6;
+  --orange-soft: #ffe8d6;
+  --on-brown: #ffffff;
+  --slab: #2b1a10;
+  --slab-ink: #f8ecdf;
+  --ok: #2f7d3a;
+  --ok-soft: #e4f3e4;
+  --err: #b42c1c;
+  --err-soft: #fde7e2;
+  --tk-key: #f7c531;
+  --tk-str: #ffa45c;
+  --tk-num: #f2b7a0;
+  --tk-com: #a8907d;
+  --tk-type: #ffd98a;
+  --edge: 3px;
+  --lift: 6px;
+  --font-display: "Archivo Black", "Arial Black", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Archivo", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --font-mono: "Space Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 20px; padding-block: 32px 72px; display: grid; gap: 40px;  grid-template-columns: minmax(0, 1fr); }
+.ex, .intro, .rail, .foot { min-width: 0; }
+.ex-head h2 { min-width: 0; overflow-wrap: anywhere; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: clamp(2.2rem, 6vw, 4rem); line-height: 0.98; text-transform: uppercase; }
+h2 { font-size: clamp(1.3rem, 2.6vw, 1.7rem); line-height: 1.1; }
+h3 { font-size: 1rem; }
+p { margin: 0; max-width: 68ch; }
+code, pre, .mono { font-family: var(--font-mono); }
+code { font-size: 0.92em; }
+:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+
+/* header */
+.intro { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px; align-items: end; }
+.intro-text { display: grid; gap: 16px; min-width: 0; }
+.eyebrow { justify-self: start; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; background: var(--yellow); border: var(--edge) solid var(--ink); padding: 4px 10px; }
+.ts-badge { display: inline-grid; place-items: center; width: 0.95em; height: 0.95em; background: var(--brown); color: var(--on-brown); font-size: 1em; line-height: 1; margin-right: 0.18em; border: var(--edge) solid var(--ink); box-shadow: 4px 4px 0 var(--ink); vertical-align: -0.08em; }
+.ts-badge-text { font-size: 0.42em; }
+.cmds { display: flex; flex-wrap: wrap; gap: 10px; }
+.cmd { font-family: var(--font-mono); font-size: 0.8rem; padding: 5px 10px; border: 2px solid var(--ink); background: var(--bg); }
+.cmd b { color: var(--brown); font-weight: 700; }
+.blocks { display: grid; grid-template-columns: repeat(4, 34px); grid-template-rows: repeat(4, 34px); gap: 0; }
+.blocks span { border: var(--edge) solid var(--ink); margin: -1.5px; }
+.blocks .y { background: var(--yellow); }
+.blocks .o { background: var(--orange); }
+.blocks .b { background: var(--brown); }
+.blocks .w { background: var(--bg); }
+.blocks .gap { border: 0; }
+@media (max-width: 720px) { .intro { grid-template-columns: minmax(0, 1fr); } .blocks { display: none; } }
+
+/* rail */
+.rail { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 12px; border-bottom: var(--edge) solid var(--ink); margin-inline: -20px; padding-inline: 20px; }
+.rail nav { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: thin; padding-bottom: 4px; }
+.rail a { flex: none; text-decoration: none; color: var(--ink); font-size: 0.84rem; font-weight: 600; padding: 6px 12px 6px 0; border: 2px solid var(--ink); background: var(--bg); white-space: nowrap; display: inline-flex; align-items: stretch; }
+.rail a span { background: var(--brown); color: var(--on-brown); font-family: var(--font-mono); font-weight: 700; padding: 0 9px; margin: -6px 10px -6px 0; display: inline-grid; place-items: center; border-right: 2px solid var(--ink); }
+.rail a:hover { background: var(--yellow); }
+
+/* exercise */
+.ex { display: grid; gap: 18px; scroll-margin-top: 78px; }
+.ex-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.ex-num { font-family: var(--font-mono); font-weight: 700; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.06em; background: var(--brown); color: var(--on-brown); padding: 6px 10px; border: var(--edge) solid var(--ink); box-shadow: 4px 4px 0 var(--ink); }
+.chip { font-size: 0.74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 3px 9px; background: var(--orange); color: var(--ink); border: 2px solid var(--ink); }
+.task { border-left: 8px solid var(--yellow); background: var(--yellow-soft); padding: 10px 14px; font-size: 0.93rem; max-width: none; }
+.task em { font-style: normal; font-weight: 600; }
+.grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 880px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+
+.code { background: var(--slab); color: var(--slab-ink); border: var(--edge) solid var(--ink); box-shadow: var(--lift) var(--lift) 0 var(--brown); min-width: 0; }
+.code .file { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink); background: var(--yellow); padding: 5px 12px; border-bottom: var(--edge) solid var(--ink); font-weight: 700; }
+.code pre { margin: 0; padding: 14px 16px; overflow-x: auto; font-size: 0.78rem; line-height: 1.65; }
+.code code { color: var(--slab-ink); }
+.token.keyword, .token.builtin { color: var(--tk-key); }
+.token.string, .token.template-string { color: var(--tk-str); }
+.token.number, .token.boolean { color: var(--tk-num); }
+.token.comment { color: var(--tk-com); font-style: italic; }
+.token.class-name, .token.function { color: var(--tk-type); }
+.token.punctuation, .token.operator { color: var(--slab-ink); opacity: 0.75; }
+
+.panel { background: var(--bg); border: var(--edge) solid var(--ink); box-shadow: var(--lift) var(--lift) 0 var(--orange); padding: 18px; display: grid; gap: 14px; min-width: 0; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+label { font-size: 0.8rem; font-weight: 600; display: grid; gap: 4px; }
+input[type="text"], input[type="number"], select, textarea { font: inherit; font-family: var(--font-mono); font-size: 0.85rem; padding: 7px 9px; border: 2px solid var(--ink); border-radius: 0; background: var(--bg); color: var(--ink); min-width: 0; }
+input:focus { background: var(--yellow-soft); }
+textarea { width: 100%; resize: vertical; }
+button { font: inherit; font-size: 0.85rem; font-weight: 700; padding: 7px 14px; border-radius: 0; border: 2px solid var(--ink); background: var(--yellow); color: var(--ink); cursor: pointer; box-shadow: 3px 3px 0 var(--ink); transition: transform 80ms, box-shadow 80ms; }
+button:hover { background: var(--orange); }
+button:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--ink); }
+button.ghost { background: var(--bg); }
+button.ghost:hover { background: var(--orange-soft); }
+.seg { display: inline-flex; border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+.seg button { border: 0; border-right: 2px solid var(--ink); box-shadow: none; background: var(--bg); font-family: var(--font-mono); font-weight: 400; }
+.seg button:last-child { border-right: 0; }
+.seg button:hover { background: var(--yellow-soft); }
+.seg button:active { transform: none; }
+.seg button[aria-pressed="true"] { background: var(--brown); color: var(--on-brown); font-weight: 700; }
+
+.out { font-family: var(--font-mono); font-size: 0.78rem; background: var(--yellow-soft); border: 2px solid var(--ink); padding: 10px 12px; white-space: pre-wrap; word-break: break-word; min-height: 2.8em; margin: 0; }
+.out .err { color: var(--err); font-weight: 700; }
+.out .dim { color: var(--muted); }
+.note { font-size: 0.84rem; color: var(--muted); }
+.note strong { color: var(--ink); }
+.pill { display: inline-block; font-size: 0.74rem; font-weight: 700; padding: 3px 10px; border: 2px solid var(--ink); }
+.pill.ok { background: var(--ok-soft); color: var(--ok); }
+.pill.err { background: var(--err-soft); color: var(--err); }
+
+details.tsc { border: var(--edge) solid var(--ink); background: var(--bg); }
+details.tsc summary { cursor: pointer; padding: 10px 14px; font-weight: 700; font-size: 0.88rem; background: var(--orange-soft); list-style-position: inside; }
+details.tsc summary:hover { background: var(--orange); }
+details.tsc[open] summary { border-bottom: var(--edge) solid var(--ink); }
+.tsc-body { padding: 16px; display: grid; gap: 14px; }
+.tsc-body .code { box-shadow: 4px 4px 0 var(--brown); }
+.tsc-out { font-family: var(--font-mono); font-size: 0.76rem; background: var(--err-soft); color: var(--err); border: 2px solid var(--err); padding: 10px 12px; white-space: pre-wrap; word-break: break-word; margin: 0; }
+
+table { border-collapse: collapse; width: 100%; font-size: 0.83rem; border: 2px solid var(--ink); }
+.tbl { overflow-x: auto; }
+th, td { text-align: left; padding: 7px 9px; border-bottom: 2px solid var(--ink); vertical-align: top; }
+th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; background: var(--brown); color: var(--on-brown); font-weight: 700; }
+tbody tr:nth-child(even) td { background: var(--yellow-soft); }
+td code { font-size: 0.76rem; }
+
+/* exercise 7 sandbox */
+.sandbox { border: var(--edge) dashed var(--ink); padding: 14px; display: grid; gap: 10px; background: repeating-linear-gradient(45deg, var(--bg) 0 12px, var(--yellow-soft) 12px 24px); }
+.sandbox #sb-box { width: 54px; height: 54px; background: var(--orange); border: var(--edge) solid var(--ink); }
+.sandbox #sb-parent { border: 2px solid var(--ink); padding: 6px; font-size: 0.82rem; background: var(--bg); }
+.sandbox #sb-child { background: var(--err-soft); padding: 4px 6px; border: 2px solid var(--err); margin-top: 4px; }
+.sandbox p { margin: 0; font-size: 0.85rem; }
+.sandbox h1 { font-size: 1.15rem; text-transform: none; }
+.sandbox button { justify-self: start; }
+
+.foot { font-size: 0.85rem; border-top: var(--edge) solid var(--ink); padding-top: 18px; display: grid; gap: 6px; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+<style>body { margin: 0; } img { max-width: 100%; } [hidden] { display: none !important; }</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="intro">
+    <div class="intro-text">
+      <div class="eyebrow">Pemrograman Web · Modul 3 · Bagian 16</div>
+      <h1><span class="ts-badge"><span class="ts-badge-text">TS</span></span>Latihan TypeScript</h1>
+      <p>Tujuh soal latihan, masing-masing dengan kode jawabannya dan panel yang bisa dicoba langsung. Di bagian bawah tiap soal ada keluaran asli <code>tsc</code> yang menunjukkan kode apa yang <em>ditolak</em> compiler dalam mode <code>strict</code>.</p>
+      <div class="cmds" aria-label="Perintah di proyek">
+        <span class="cmd"><b>npm run</b> typecheck</span>
+        <span class="cmd"><b>npm run</b> build</span>
+        <span class="cmd"><b>npm</b> start</span>
+        <span class="cmd"><b>npx</b> tsc -p notes</span>
+      </div>
+    </div>
+    <div class="blocks" aria-hidden="true">
+      <span class="b"></span><span class="b"></span><span class="y"></span><span class="gap"></span>
+      <span class="b"></span><span class="o"></span><span class="y"></span><span class="y"></span>
+      <span class="gap"></span><span class="o"></span><span class="w"></span><span class="b"></span>
+      <span class="y"></span><span class="o"></span><span class="o"></span><span class="b"></span>
+    </div>
+  </header>
+
+  <div class="rail">
+    <nav aria-label="Daftar latihan">
+      <a href="#l1"><span>1</span>Tipe dasar</a>
+      <a href="#l2"><span>2</span>Union</a>
+      <a href="#l3"><span>3</span>Discriminated union</a>
+      <a href="#l4"><span>4</span>Utility types</a>
+      <a href="#l5"><span>5</span>Generics</a>
+      <a href="#l6"><span>6</span>Async</a>
+      <a href="#l7"><span>7</span>Refactor strict</a>
+    </nav>
+  </div>
+
+  <!-- 1 -->
+  <section class="ex" id="l1">
+    <div class="ex-head"><span class="ex-num">Latihan 1</span><h2>average</h2><span class="chip">tipe dasar · null</span></div>
+    <p class="task">Tulis fungsi <em><code>average(nums: number[])</code></em> yang menangani array kosong dengan benar. Pikirkan tipe return yang tepat.</p>
+    <div class="grid">
+      <div class="code"><div class="file">src/01-basic-types.ts</div><pre><code class="language-typescript" data-src="c1"></code></pre></div>
+      <div class="panel">
+        <label for="avg-in">Angka, dipisah koma (kosongkan untuk array kosong)
+          <input type="text" id="avg-in" value="1, 2, 3, 4">
+        </label>
+        <div class="row"><button id="avg-run">Hitung average</button><button class="ghost" id="avg-empty">Coba array kosong</button></div>
+        <pre class="out" id="avg-out"></pre>
+        <p class="note">Array kosong tidak punya rata-rata. Mengembalikan <code>0</code> berarti berbohong, dan <code>NaN</code> tetap bertipe <code>number</code>. Dengan <code>number | null</code>, pemanggil wajib menangani kasus kosong.</p>
+      </div>
+    </div>
+    <details class="tsc"><summary>Lihat apa yang ditolak compiler</summary>
+      <div class="tsc-body">
+        <div class="code"><div class="file">tambahan di src/index.ts</div><pre><code class="language-typescript">const m: number = average([1, 2, 3]);</code></pre></div>
+        <pre class="tsc-out">src/index.ts(10,7): error TS2322: Type 'number | null' is not assignable to type 'number'.
+  Type 'null' is not assignable to type 'number'.</pre>
+      </div>
+    </details>
+  </section>
+
+  <!-- 2 -->
+  <section class="ex" id="l2">
+    <div class="ex-head"><span class="ex-num">Latihan 2</span><h2>formatId</h2><span class="chip">union · narrowing</span></div>
+    <p class="task">Buat <em><code>formatId(id: string | number): string</code></em> yang mengembalikan huruf besar untuk string dan angka 6 digit (<code>000482</code>) untuk number.</p>
+    <div class="grid">
+      <div class="code"><div class="file">src/02-union-narrowing.ts</div><pre><code class="language-typescript" data-src="c2"></code></pre></div>
+      <div class="panel">
+        <div class="row">
+          <div class="seg" role="group" aria-label="Tipe id">
+            <button type="button" id="fid-str" aria-pressed="false">string</button>
+            <button type="button" id="fid-num" aria-pressed="true">number</button>
+          </div>
+          <input type="text" id="fid-in" value="482" aria-label="Nilai id">
+          <button id="fid-run">Format</button>
+        </div>
+        <pre class="out" id="fid-out"></pre>
+        <p class="note">Setelah <code>typeof id === "string"</code>, TypeScript mempersempit tipe: di dalam <code>if</code> <code>id</code> adalah string, setelahnya pasti number. Coba juga <code>-5</code> atau <code>1234567</code>: soal tidak mengatur kasus itu.</p>
+      </div>
+    </div>
+    <details class="tsc"><summary>Lihat apa yang ditolak compiler</summary>
+      <div class="tsc-body">
+        <div class="code"><div class="file">notes/compile-errors/ex1-ex2-ex5-calls.ts</div><pre><code class="language-typescript">formatId(true); // only string | number</code></pre></div>
+        <pre class="tsc-out">notes/compile-errors/ex1-ex2-ex5-calls.ts(7,10): error TS2345: Argument of type 'boolean' is not assignable to parameter of type 'string | number'.</pre>
+      </div>
+    </details>
+  </section>
+
+  <!-- 3 -->
+  <section class="ex" id="l3">
+    <div class="ex-head"><span class="ex-num">Latihan 3</span><h2>PaymentMethod dan describe</h2><span class="chip">discriminated union · never</span></div>
+    <p class="task">Modelkan <em><code>PaymentMethod</code></em> dengan tiga kemungkinan (<code>"card"</code>, <code>"transfer"</code>, <code>"cash"</code>) dengan properti berbeda, lalu buat <em><code>describe(p)</code></em> dengan pengecekan kelengkapan memakai <code>never</code>.</p>
+    <div class="grid">
+      <div class="code"><div class="file">src/03-discriminated-union.ts</div><pre><code class="language-typescript" data-src="c3"></code></pre></div>
+      <div class="panel">
+        <div class="seg" role="group" aria-label="Jenis pembayaran">
+          <button type="button" data-kind="card" aria-pressed="true">card</button>
+          <button type="button" data-kind="transfer" aria-pressed="false">transfer</button>
+          <button type="button" data-kind="cash" aria-pressed="false">cash</button>
+        </div>
+        <div class="row" id="pm-fields"></div>
+        <pre class="out" id="pm-out"></pre>
+        <p class="note">Properti <code>kind</code> adalah penanda jenis. Setelah dicek di <code>switch</code>, hanya properti milik jenis itu yang boleh dipakai. Di <code>default</code>, <code>p</code> bertipe <code>never</code>.</p>
+      </div>
+    </div>
+    <details class="tsc"><summary>Lihat apa yang ditolak compiler: jenis ke-4 yang lupa ditangani</summary>
+      <div class="tsc-body">
+        <div class="code"><div class="file">perubahan di src/03-discriminated-union.ts</div><pre><code class="language-typescript">  | { kind: "cash"; amount: number }
+  | { kind: "crypto"; coin: string };</code></pre></div>
+        <pre class="tsc-out">src/03-discriminated-union.ts(21,13): error TS2322: Type '{ kind: "crypto"; coin: string; }' is not assignable to type 'never'.</pre>
+        <p class="note">Pesan error langsung menyebut jenis yang belum ditangani. Inilah gunanya pengecekan <code>never</code>.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- 4 -->
+  <section class="ex" id="l4">
+    <div class="ex-head"><span class="ex-num">Latihan 4</span><h2>Product dan turunannya</h2><span class="chip">utility types</span></div>
+    <p class="task">Dari <em><code>Product</code></em>, turunkan <code>ProductSummary</code> (hanya <code>id</code> dan <code>name</code>), <code>ProductUpdate</code> (semua opsional, <code>id</code> tidak boleh diubah), dan <code>ReadonlyProduct</code>.</p>
+    <div class="grid">
+      <div class="code"><div class="file">src/04-utility-types.ts</div><pre><code class="language-typescript" data-src="c4"></code></pre></div>
+      <div class="panel">
+        <p class="mono note">product = { id: 1, name: 'Pen', price: 5000, stock: 10 }</p>
+        <div class="row">
+          <label for="pu-price">price (opsional)<input type="number" id="pu-price" value="6000"></label>
+          <label for="pu-stock">stock (opsional)<input type="number" id="pu-stock" value="8"></label>
+        </div>
+        <div class="row"><button id="pu-run">applyUpdate</button></div>
+        <pre class="out" id="pu-out"></pre>
+        <p class="note"><code>Omit</code> berjalan lebih dulu, jadi <code>id</code> benar-benar hilang dari <code>ProductUpdate</code>. Semua tipe ini hanya ada saat kompilasi; di JavaScript hasil build hanya tersisa <code>applyUpdate</code>.</p>
+      </div>
+    </div>
+    <details class="tsc"><summary>Lihat apa yang ditolak compiler</summary>
+      <div class="tsc-body">
+        <div class="code"><div class="file">notes/compile-errors/ex4-utility.ts</div><pre><code class="language-typescript" data-src="c4err"></code></pre></div>
+        <pre class="tsc-out">notes/compile-errors/ex4-utility.ts(6,55): error TS2353: Object literal may only specify known properties, and 'price' does not exist in type 'ProductSummary'.
+notes/compile-errors/ex4-utility.ts(7,33): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Partial&lt;Omit&lt;Product, "id"&gt;&gt;'.
+notes/compile-errors/ex4-utility.ts(9,8): error TS2540: Cannot assign to 'price' because it is a read-only property.</pre>
+      </div>
+    </details>
+  </section>
+
+  <!-- 5 -->
+  <section class="ex" id="l5">
+    <div class="ex-head"><span class="ex-num">Latihan 5</span><h2>groupBy</h2><span class="chip">generics</span></div>
+    <p class="task">Buat fungsi <em><code>groupBy&lt;T, K extends string | number&gt;(items: T[], key: (item: T) =&gt; K): Record&lt;K, T[]&gt;</code></em>.</p>
+    <div class="grid">
+      <div class="code"><div class="file">src/05-generics.ts</div><pre><code class="language-typescript" data-src="c5"></code></pre></div>
+      <div class="panel">
+        <label for="gb-in">Kata-kata, dipisah koma
+          <input type="text" id="gb-in" value="apple, avocado, banana, blueberry, cherry">
+        </label>
+        <div class="row">
+          <div class="seg" role="group" aria-label="Kunci pengelompokan">
+            <button type="button" data-key="len" aria-pressed="true">w.length</button>
+            <button type="button" data-key="first" aria-pressed="false">w.charAt(0)</button>
+          </div>
+          <button class="ghost" id="gb-bad">Coba kunci "toString"</button>
+        </div>
+        <pre class="out" id="gb-out"></pre>
+        <p class="note">Kunci angka diurutkan naik oleh JavaScript (<code>5, 6, 7, 9</code>) walaupun urutan masuknya <code>5, 7, 6, 9</code>. Tombol "toString" menunjukkan batas fungsi ini: objek biasa mewarisi properti itu dari <code>Object.prototype</code>.</p>
+      </div>
+    </div>
+    <details class="tsc"><summary>Lihat apa yang ditolak compiler</summary>
+      <div class="tsc-body">
+        <div class="code"><div class="file">notes/compile-errors/ex1-ex2-ex5-calls.ts</div><pre><code class="language-typescript">groupBy([1, 2, 3], (n) => n > 1); // the key must be string | number, not boolean</code></pre></div>
+        <pre class="tsc-out">notes/compile-errors/ex1-ex2-ex5-calls.ts(8,27): error TS2322: Type 'boolean' is not assignable to type 'string | number'.</pre>
+      </div>
+    </details>
+  </section>
+
+  <!-- 6 -->
+  <section class="ex" id="l6">
+    <div class="ex-head"><span class="ex-num">Latihan 6</span><h2>fetchJson</h2><span class="chip">async · error handling</span></div>
+    <p class="task">Tulis <em><code>fetchJson&lt;T&gt;(url: string): Promise&lt;T&gt;</code></em> yang melempar <code>Error</code> jika <code>res.ok</code> bernilai <code>false</code>. Diskusikan: apa yang <em>tidak</em> dijamin oleh <code>T</code>?</p>
+    <div class="grid">
+      <div class="code"><div class="file">src/06-async.ts</div><pre><code class="language-typescript" data-src="c6"></code></pre></div>
+      <div class="panel">
+        <p class="mono note">interface User { id: number; name: string }</p>
+        <div class="row">
+          <button id="fj-ok">Respons benar</button>
+          <button id="fj-wrong">Bentuk data salah</button>
+          <button id="fj-404">Status 404</button>
+        </div>
+        <pre class="out" id="fj-out"></pre>
+        <p class="note"><strong>Jawaban diskusi:</strong> <code>T</code> tidak menjamin apa pun tentang isi data. <code>as T</code> hanya membuat compiler percaya; tipe dihapus saat kompilasi. Tombol kedua membuktikannya: <code>user.name</code> bertipe <code>string</code> menurut compiler, tetapi isinya <code>undefined</code>.</p>
+        <p class="note">Halaman ini tidak boleh mengakses jaringan, jadi tiga respons di atas dibuat dengan objek <code>Response</code> milik browser. Di proyek asli, <code>npm start</code> memakai URL <code>data:</code> dan satu permintaan sungguhan yang menghasilkan 404.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section class="ex" id="l7">
+    <div class="ex-head"><span class="ex-num">Latihan 7</span><h2>Refactor ke TypeScript strict</h2><span class="chip">membaca error</span></div>
+    <p class="task">Ambil kode JavaScript dari bagian "Intermediate JavaScript" di Modul 2, ubah ke TypeScript <em><code>strict</code></em>, dan catat error yang muncul.</p>
+    <div class="row">
+      <span class="pill ok">Array dan objek (fruits): 0 error</span>
+      <span class="pill err">Manipulasi DOM: 15 error</span>
+    </div>
+    <div class="grid">
+      <div class="code"><div class="file">notes/07-original/dom.original.ts (kutipan kode asli; komentar menandai error)</div><pre><code class="language-typescript" data-src="c7orig"></code></pre></div>
+      <div class="code"><div class="file">src/07-refactor/dom.ts (kutipan, setelah diperbaiki)</div><pre><code class="language-typescript" data-src="c7fix"></code></pre></div>
+    </div>
+    <details class="tsc" open><summary>Keluaran <code>npx tsc -p notes</code> untuk kode DOM asli (15 error)</summary>
+      <div class="tsc-body">
+        <pre class="tsc-out">notes/07-original/dom.original.ts(12,1): error TS18047: 'title' is possibly 'null'.
+notes/07-original/dom.original.ts(13,1): error TS18047: 'title' is possibly 'null'.
+notes/07-original/dom.original.ts(17,1): error TS18047: 'content' is possibly 'null'.
+notes/07-original/dom.original.ts(22,1): error TS18047: 'form' is possibly 'null'.
+notes/07-original/dom.original.ts(24,22): error TS2531: Object is possibly 'null'.
+notes/07-original/dom.original.ts(24,60): error TS2339: Property 'value' does not exist on type 'HTMLElement'.
+notes/07-original/dom.original.ts(29,1): error TS18047: 'title' is possibly 'null'.
+notes/07-original/dom.original.ts(30,1): error TS18047: 'title' is possibly 'null'.
+notes/07-original/dom.original.ts(34,1): error TS18047: 'box' is possibly 'null'.
+notes/07-original/dom.original.ts(35,1): error TS18047: 'box' is possibly 'null'.
+notes/07-original/dom.original.ts(38,21): error TS7006: Parameter 'id' implicitly has an 'any' type.
+notes/07-original/dom.original.ts(43,1): error TS2304: Cannot find name 'button'.
+notes/07-original/dom.original.ts(50,1): error TS18047: 'parentElement' is possibly 'null'.
+notes/07-original/dom.original.ts(50,27): error TS2345: Argument of type 'HTMLElement | null' is not assignable to parameter of type 'Node'.
+  Type 'null' is not assignable to type 'Node'.
+notes/07-original/dom.original.ts(62,3): error TS2532: Object is possibly 'undefined'.</pre>
+        <div class="tbl">
+          <table>
+            <thead><tr><th>Error</th><th>Jumlah</th><th>Penyebab</th><th>Perbaikan</th></tr></thead>
+            <tbody>
+              <tr><td>TS18047, TS2531</td><td>10</td><td><code>getElementById</code> bisa mengembalikan <code>null</code></td><td><code>if (el) { ... }</code></td></tr>
+              <tr><td>TS2339</td><td>1</td><td><code>HTMLElement</code> tidak punya <code>value</code></td><td><code>instanceof HTMLInputElement</code></td></tr>
+              <tr><td>TS7006</td><td>1</td><td>parameter <code>id</code> tanpa tipe</td><td><code>id: HTMLElement</code></td></tr>
+              <tr><td>TS2304</td><td>1</td><td><code>button</code> tidak pernah dideklarasikan</td><td>ambil dengan <code>getElementById</code> lalu cek</td></tr>
+              <tr><td>TS2345</td><td>1</td><td><code>removeChild</code> tidak menerima <code>null</code></td><td>cek keduanya sebelum dipanggil</td></tr>
+              <tr><td>TS2532</td><td>1</td><td><code>divs[i]</code> bisa <code>undefined</code></td><td>simpan ke variabel lalu cek</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">Semua diperbaiki dengan memperbaiki penyebabnya: tanpa <code>any</code>, <code>!</code>, atau <code>@ts-ignore</code>.</p>
+      </div>
+    </details>
+    <div class="grid">
+      <div class="panel">
+        <h3>Jalankan <code>setupDom()</code> yang sudah diperbaiki</h3>
+        <p class="note">Di Node, <code>dom.ts</code> hanya bisa dicek tipenya karena tidak ada <code>document</code>. Di browser kodenya benar-benar berjalan. Penyesuaian untuk halaman ini: pencarian elemen dibatasi ke kotak demo (agar tidak mewarnai seluruh halaman) dan <code>alert</code> diganti teks, karena artifact tidak menampilkan <code>alert</code>.</p>
+        <div class="row"><button id="dom-run">Jalankan setupDom()</button><button class="ghost" id="dom-reset">Reset kotak demo</button></div>
+        <pre class="out" id="dom-out"></pre>
+      </div>
+      <div class="sandbox" id="sandbox"></div>
+    </div>
+    <div class="grid">
+      <div class="code"><div class="file">src/07-refactor/fruits.ts (array, tanpa error)</div><pre><code class="language-typescript" data-src="c7fruits"></code></pre></div>
+      <div class="panel">
+        <div class="row"><button id="fr-run">Jalankan bagian array</button></div>
+        <pre class="out" id="fr-out"></pre>
+        <p class="note">Kode array dan objek Modul 2 lolos <code>strict</code> tanpa error karena tipenya sudah tertebak (<code>string[]</code>). Refactor hanya menuliskan tipe itu secara eksplisit.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>Sumber: proyek <span class="mono">Latihan-Typescript</span> (TypeScript 7.0.2, Node v24). Keluaran error di halaman ini disalin dari hasil <code>tsc</code> yang sebenarnya.</p>
+    <p>Fungsi di halaman ini adalah versi JavaScript dari hasil <code>npm run build</code>; tipe tidak ada saat program berjalan, itulah sebabnya pemeriksaan hanya terjadi saat kompilasi.</p>
+  </footer>
+</div>
+
+<script type="text/plain" id="c1">export function average(nums: number[]): number | null {
+  if (nums.length === 0) return null;
+  let sum = 0;
+  for (const n of nums) sum += n;
+  return sum / nums.length;
+}</script>
+<script type="text/plain" id="c2">export function formatId(id: string | number): string {
+  if (typeof id === "string") {
+    return id.toUpperCase();
+  }
+  return String(id).padStart(6, "0");
+}</script>
+<script type="text/plain" id="c3">export type PaymentMethod =
+  | { kind: "card"; brand: string; last4: string }
+  | { kind: "transfer"; bank: string; accountNo: string }
+  | { kind: "cash"; amount: number };
+
+export function describe(p: PaymentMethod): string {
+  switch (p.kind) {
+    case "card":
+      return `Card ${p.brand} ending in ${p.last4}`;
+    case "transfer":
+      return `Bank transfer via ${p.bank} (account ${p.accountNo})`;
+    case "cash":
+      return `Cash payment of ${p.amount}`;
+    default: {
+      const _exhaustive: never = p;
+      return _exhaustive;
+    }
+  }
+}</script>
+<script type="text/plain" id="c4">export interface Product {
+  id: number;
+  name: string;
+  price: number;
+  stock: number;
+}
+
+export type ProductSummary = Pick<Product, "id" | "name">;
+export type ProductUpdate = Partial<Omit<Product, "id">>;
+export type ReadonlyProduct = Readonly<Product>;
+
+export function applyUpdate(product: Product, update: ProductUpdate): Product {
+  return { ...product, ...update };
+}</script>
+<script type="text/plain" id="c4err">const summary: ProductSummary = { id: 1, name: "Pen", price: 5000 };
+const update: ProductUpdate = { id: 2 };
+const frozen: ReadonlyProduct = product;
+frozen.price = 1;</script>
+<script type="text/plain" id="c5">export function groupBy<T, K extends string | number>(
+  items: T[],
+  key: (item: T) => K,
+): Record<K, T[]> {
+  const result: Partial<Record<K, T[]>> = {};
+  for (const item of items) {
+    const k = key(item);
+    const bucket = result[k];
+    if (bucket) {
+      bucket.push(item);
+    } else {
+      result[k] = [item];
+    }
+  }
+  // Boundary assertion: every key that exists was filled.
+  return result as Record<K, T[]>;
+}</script>
+<script type="text/plain" id="c6">export async function fetchJson<T>(url: string): Promise<T> {
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`Request to ${url} failed: ${res.status} ${res.statusText}`);
+  }
+  return (await res.json()) as T;
+}</script>
+<script type="text/plain" id="c7orig">const title = document.getElementById("title");
+title.textContent = "New Title";            // TS18047
+
+const form = document.getElementById("myForm");
+form.addEventListener("submit", (event) => { // TS18047
+  event.preventDefault();
+  const inputValue = document.getElementById("inputField").value; // TS2531, TS2339
+  alert(`Input value: ${inputValue}`);
+});
+
+function changeText(id) {                    // TS7006
+  id.innerHTML = "Huft!";
+}
+
+button.addEventListener("click", () => {    // TS2304
+  console.log("Button was clicked!");
+});
+
+const divs = document.getElementsByTagName("div");
+for (let i = 0; i < divs.length; i++) {
+  divs[i].style.backgroundColor = "yellow"; // TS2532
+}</script>
+<script type="text/plain" id="c7fix">const title = document.getElementById("title");
+if (title) {
+  title.textContent = "New Title";
+}
+
+const form = document.getElementById("myForm");
+if (form) {
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const input = document.getElementById("inputField");
+    if (input instanceof HTMLInputElement) {
+      alert(`Input value: ${input.value}`);
+    }
+  });
+}
+
+export function changeText(id: HTMLElement): void {
+  id.innerHTML = "Huft!";
+}
+
+const button = document.getElementById("button");
+if (button) {
+  button.addEventListener("click", () => {
+    console.log("Button was clicked!");
+  });
+}
+
+const divs = document.getElementsByTagName("div");
+for (let i = 0; i < divs.length; i++) {
+  const div = divs[i];
+  if (div) {
+    div.style.backgroundColor = "yellow";
+  }
+}</script>
+<script type="text/plain" id="c7fruits">const fruits: string[] = ["🍏", "🍉", "🍊"];
+
+fruits.push("🍇");
+fruits.pop();
+fruits.unshift("🍊");
+fruits.shift();
+
+const moreFruits: string[] = ["🍏", "🍉"];
+const allFruits: string[] = fruits.concat(moreFruits);
+const index: number = fruits.indexOf("🍏");
+const hasApple: boolean = fruits.includes("🍏");
+const someFruits: string[] = fruits.slice(1, 3);
+
+fruits.splice(2, 0, "🍏");
+fruits.splice(1, 1);
+
+fruits.forEach((fruit) => {
+  console.log(fruit);
+});
+console.log(allFruits, index, hasApple, someFruits);</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-clike.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+<script>
+// ---- Exercise functions: JavaScript as emitted by `npm run build` (types erased) ----
+function average(nums) {
+  if (nums.length === 0) return null;
+  let sum = 0;
+  for (const n of nums) sum += n;
+  return sum / nums.length;
+}
+function formatId(id) {
+  if (typeof id === "string") {
+    return id.toUpperCase();
+  }
+  return String(id).padStart(6, "0");
+}
+function describe(p) {
+  switch (p.kind) {
+    case "card":
+      return `Card ${p.brand} ending in ${p.last4}`;
+    case "transfer":
+      return `Bank transfer via ${p.bank} (account ${p.accountNo})`;
+    case "cash":
+      return `Cash payment of ${p.amount}`;
+    default: {
+      const _exhaustive = p;
+      return _exhaustive;
+    }
+  }
+}
+function applyUpdate(product, update) {
+  return { ...product, ...update };
+}
+function groupBy(items, key) {
+  const result = {};
+  for (const item of items) {
+    const k = key(item);
+    const bucket = result[k];
+    if (bucket) {
+      bucket.push(item);
+    } else {
+      result[k] = [item];
+    }
+  }
+  return result;
+}
+// The page cannot reach the network, so fetch is replaced by a local stand-in
+// that returns real browser Response objects for three example URLs.
+const API = "https://api.example.com";
+function demoFetch(url) {
+  const json = (body, init) => new Response(JSON.stringify(body), { headers: { "content-type": "application/json" }, ...init });
+  if (url === API + "/users/1") return Promise.resolve(json({ id: 1, name: "Alice" }, { status: 200 }));
+  if (url === API + "/users/wrong-shape") return Promise.resolve(json({ unexpected: true }, { status: 200 }));
+  return Promise.resolve(json({}, { status: 404, statusText: "Not Found" }));
+}
+async function fetchJson(url) {
+  const res = await demoFetch(url);
+  if (!res.ok) {
+    throw new Error(`Request to ${url} failed: ${res.status} ${res.statusText}`);
+  }
+  return (await res.json());
+}
+
+// ---- Output formatting, close to Node's console.log ----
+function inspect(v, depth = 0) {
+  if (v === null) return "null";
+  if (v === undefined) return "undefined";
+  if (typeof v === "string") return depth === 0 ? v : `'${v}'`;
+  if (typeof v !== "object") return String(v);
+  if (Array.isArray(v)) return `[ ${v.map((x) => inspect(x, depth + 1)).join(", ")} ]`;
+  const keys = Object.keys(v);
+  if (keys.length === 0) return "{}";
+  const key = (k) => (/^[A-Za-z_$][\w$]*$/.test(k) ? k : `'${k}'`);
+  return `{ ${keys.map((k) => `${key(k)}: ${inspect(v[k], depth + 1)}`).join(", ")} }`;
+}
+function line(text, cls) {
+  const span = document.createElement("span");
+  if (cls) span.className = cls;
+  span.textContent = text + "\n";
+  return span;
+}
+function write(id, lines) {
+  const out = document.getElementById(id);
+  out.replaceChildren(...lines.map((l) => (typeof l === "string" ? line(l) : line(l.text, l.cls))));
+}
+function pressed(groupButtons, active) {
+  groupButtons.forEach((b) => b.setAttribute("aria-pressed", String(b === active)));
+}
+
+// ---- Code panels ----
+document.querySelectorAll("code[data-src]").forEach((el) => {
+  el.textContent = document.getElementById(el.dataset.src).textContent;
+});
+if (window.Prism) Prism.highlightAll();
+
+// ---- 1 ----
+function runAverage() {
+  const raw = document.getElementById("avg-in").value.trim();
+  const nums = raw === "" ? [] : raw.split(",").map((s) => Number(s.trim()));
+  const shown = `average(${inspect(nums, 1)})`;
+  const r = average(nums);
+  write("avg-out", [`${shown} = ${inspect(r)}`, { text: `tipe hasil: number | null  → ${r === null ? "null" : "number"}`, cls: "dim" }]);
+}
+document.getElementById("avg-run").addEventListener("click", runAverage);
+document.getElementById("avg-empty").addEventListener("click", () => { document.getElementById("avg-in").value = ""; runAverage(); });
+runAverage();
+
+// ---- 2 ----
+let fidType = "number";
+const fidBtns = [document.getElementById("fid-str"), document.getElementById("fid-num")];
+fidBtns[0].addEventListener("click", () => { fidType = "string"; pressed(fidBtns, fidBtns[0]); document.getElementById("fid-in").value = "ab-12"; runFormat(); });
+fidBtns[1].addEventListener("click", () => { fidType = "number"; pressed(fidBtns, fidBtns[1]); document.getElementById("fid-in").value = "482"; runFormat(); });
+function runFormat() {
+  const raw = document.getElementById("fid-in").value;
+  if (fidType === "number") {
+    const n = Number(raw);
+    write("fid-out", [`formatId(${raw}) = ${formatId(n)}`, { text: "cabang number: String(id).padStart(6, \"0\")", cls: "dim" }]);
+  } else {
+    write("fid-out", [`formatId("${raw}") = ${formatId(raw)}`, { text: "cabang string: id.toUpperCase()", cls: "dim" }]);
+  }
+}
+document.getElementById("fid-run").addEventListener("click", runFormat);
+runFormat();
+
+// ---- 3 ----
+const pmFields = {
+  card: [["brand", "Visa"], ["last4", "4242"]],
+  transfer: [["bank", "BCA"], ["accountNo", "1234567890"]],
+  cash: [["amount", "50000"]],
+};
+let pmKind = "card";
+const pmBtns = [...document.querySelectorAll("#l3 [data-kind]")];
+function renderPmFields() {
+  const box = document.getElementById("pm-fields");
+  box.replaceChildren(...pmFields[pmKind].map(([name, value]) => {
+    const label = document.createElement("label");
+    label.htmlFor = "pm-" + name;
+    label.textContent = name;
+    const input = document.createElement("input");
+    input.type = "text"; input.id = "pm-" + name; input.value = value;
+    input.addEventListener("input", runDescribe);
+    label.append(input);
+    return label;
+  }));
+  runDescribe();
+}
+function runDescribe() {
+  const p = { kind: pmKind };
+  pmFields[pmKind].forEach(([name]) => {
+    const v = document.getElementById("pm-" + name).value;
+    p[name] = name === "amount" ? Number(v) : v;
+  });
+  write("pm-out", [`describe(${inspect(p, 1)})`, `→ ${describe(p)}`]);
+}
+pmBtns.forEach((b) => b.addEventListener("click", () => { pmKind = b.dataset.kind; pressed(pmBtns, b); renderPmFields(); }));
+renderPmFields();
+
+// ---- 4 ----
+const product = { id: 1, name: "Pen", price: 5000, stock: 10 };
+function runUpdate() {
+  const update = {};
+  const price = document.getElementById("pu-price").value;
+  const stock = document.getElementById("pu-stock").value;
+  if (price !== "") update.price = Number(price);
+  if (stock !== "") update.stock = Number(stock);
+  const summary = { id: product.id, name: product.name };
+  write("pu-out", [
+    `summary : ${inspect(summary, 1)}`,
+    `update  : ${inspect(update, 1)}`,
+    `updated : ${inspect(applyUpdate(product, update), 1)}`,
+    `readonly: ${inspect(product, 1)}`,
+    { text: "product asli tidak berubah (spread membuat objek baru)", cls: "dim" },
+  ]);
+}
+document.getElementById("pu-run").addEventListener("click", runUpdate);
+runUpdate();
+
+// ---- 5 ----
+let gbKey = "len";
+const gbBtns = [...document.querySelectorAll("#l5 [data-key]")];
+function words() {
+  return document.getElementById("gb-in").value.split(",").map((s) => s.trim()).filter((s) => s !== "");
+}
+function runGroupBy() {
+  const ws = words();
+  const r = gbKey === "len" ? groupBy(ws, (w) => w.length) : groupBy(ws, (w) => w.charAt(0));
+  const call = gbKey === "len" ? "groupBy(words, (w) => w.length)" : "groupBy(words, (w) => w.charAt(0))";
+  write("gb-out", [call, inspect(r, 1)]);
+}
+gbBtns.forEach((b) => b.addEventListener("click", () => { gbKey = b.dataset.key; pressed(gbBtns, b); runGroupBy(); }));
+document.getElementById("gb-in").addEventListener("input", runGroupBy);
+document.getElementById("gb-bad").addEventListener("click", () => {
+  try {
+    const r = groupBy(["toString"], (w) => w);
+    write("gb-out", ['groupBy(["toString"], (w) => w)', inspect(r, 1)]);
+  } catch (e) {
+    write("gb-out", ['groupBy(["toString"], (w) => w)', { text: `${e.name}: ${e.message}`, cls: "err" }, { text: "result[\"toString\"] menemukan fungsi warisan Object.prototype, bukan undefined", cls: "dim" }]);
+  }
+});
+runGroupBy();
+
+// ---- 6 ----
+async function runFetch(path) {
+  const url = API + path;
+  const lines = [`await fetchJson<User>("${url}")`];
+  try {
+    const user = await fetchJson(url);
+    lines.push(`hasil      : ${inspect(user, 1)}`);
+    lines.push(`user.name  : ${inspect(user.name, 1)}`);
+    lines.push({ text: "compiler mengira user.name bertipe string", cls: "dim" });
+  } catch (err) {
+    if (err instanceof Error) {
+      lines.push({ text: `Gagal: ${err.message}`, cls: "err" });
+    } else {
+      lines.push({ text: `Error tidak dikenal: ${String(err)}`, cls: "err" });
+    }
+  }
+  write("fj-out", lines);
+}
+document.getElementById("fj-ok").addEventListener("click", () => runFetch("/users/1"));
+document.getElementById("fj-wrong").addEventListener("click", () => runFetch("/users/wrong-shape"));
+document.getElementById("fj-404").addEventListener("click", () => runFetch("/users/9999"));
+runFetch("/users/wrong-shape");
+
+// ---- 7: DOM ----
+const SANDBOX_HTML = `
+  <h3 id="sb-title">Judul awal</h3>
+  <div id="sb-content"><p>Konten awal.</p></div>
+  <form id="sb-myForm" class="row">
+    <input type="text" id="sb-inputField" value="halo TypeScript" aria-label="inputField">
+    <button type="submit">Kirim form</button>
+  </form>
+  <div id="sb-box" aria-label="box"></div>
+  <button type="button" id="sb-button">Tombol #button</button>
+  <div id="sb-parent">#parent <div id="sb-child">#child (akan dihapus)</div></div>
+  <p>Paragraf satu.</p>
+  <p>Paragraf dua.</p>`;
+function resetSandbox() {
+  document.getElementById("sandbox").innerHTML = SANDBOX_HTML;
+  write("dom-out", [{ text: "Kotak demo dalam keadaan awal. Klik \"Jalankan setupDom()\".", cls: "dim" }]);
+}
+// setupDom from src/07-refactor/dom.ts, scoped to the sandbox: `document.getElementById(x)`
+// becomes `byId(x)`, and alert/console.log become a visible log line.
+function setupDom(root, log) {
+  const byId = (id) => root.querySelector("#sb-" + id);
+  const title = byId("title");
+  if (title) {
+    title.textContent = "New Title";
+    title.style.color = "blue";
+    title.style.fontSize = "24px";
+    title.style.backgroundColor = "yellow";
+    log("title: teks dan gaya diubah");
+  }
+  const content = byId("content");
+  if (content) {
+    content.innerHTML = "<h1>Judul Baru</h1><p>Paragraf diubah dengan innerHTML.</p>";
+    log("content: innerHTML diganti");
+  }
+  const form = byId("myForm");
+  if (form) {
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const input = byId("inputField");
+      if (input instanceof HTMLInputElement) {
+        log(`Input value: ${input.value}`);
+      }
+    });
+    log("form: listener submit dipasang");
+  }
+  const box = byId("box");
+  if (box) {
+    box.style.transition = "transform 0.5s";
+    box.style.transform = "rotate(45deg)";
+    log("box: diputar 45 derajat");
+  }
+  const button = byId("button");
+  if (button) {
+    button.addEventListener("click", () => {
+      log("Button was clicked!");
+    });
+    log("button: listener click dipasang");
+  }
+  const parentElement = byId("parent");
+  const childElement = byId("child");
+  if (parentElement && childElement) {
+    parentElement.removeChild(childElement);
+    log("parent: child dihapus");
+  }
+  const paragraphs = root.querySelectorAll("p");
+  paragraphs.forEach((p) => {
+    p.style.color = "green";
+  });
+  log(`paragraf: ${paragraphs.length} diwarnai hijau`);
+  const divs = root.getElementsByTagName("div");
+  for (let i = 0; i < divs.length; i++) {
+    const div = divs[i];
+    if (div) {
+      div.style.backgroundColor = "yellow";
+    }
+  }
+  log(`div: ${divs.length} diberi latar kuning`);
+}
+const domLog = [];
+document.getElementById("dom-run").addEventListener("click", () => {
+  resetSandbox();
+  domLog.length = 0;
+  const log = (t) => { domLog.push(t); write("dom-out", domLog.slice()); };
+  setupDom(document.getElementById("sandbox"), log);
+  log("Sekarang coba klik \"Kirim form\" dan \"Tombol #button\" di kotak demo.");
+});
+document.getElementById("dom-reset").addEventListener("click", resetSandbox);
+resetSandbox();
+
+// ---- 7: fruits ----
+function runFruits() {
+  const out = [];
+  const log = (...args) => out.push(args.map((a) => inspect(a, typeof a === "string" ? 0 : 1)).join(" "));
+  const fruits = ["🍏", "🍉", "🍊"];
+  fruits.push("🍇");
+  fruits.pop();
+  fruits.unshift("🍊");
+  fruits.shift();
+  const moreFruits = ["🍏", "🍉"];
+  const allFruits = fruits.concat(moreFruits);
+  const index = fruits.indexOf("🍏");
+  const hasApple = fruits.includes("🍏");
+  const someFruits = fruits.slice(1, 3);
+  fruits.splice(2, 0, "🍏");
+  fruits.splice(1, 1);
+  fruits.forEach((fruit) => {
+    log(fruit);
+  });
+  log(allFruits, index, hasApple, someFruits);
+  write("fr-out", out);
+}
+document.getElementById("fr-run").addEventListener("click", runFruits);
+runFruits();
+</script>
+
+</body>
+</html>
